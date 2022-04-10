@@ -1,0 +1,701 @@
+
+    <!DOCTYPE html>
+    <html>
+      <head>
+        <meta charset="utf-8">
+        <title>Anki card – Thai vocab</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+      </head>
+      
+    <body class="card card1 isMac">
+      <style>
+      </style>
+<style>
+/* CSS reset: https://css-tricks.com/an-interview-with-elad-shechter-on-the-new-css-reset/ */
+*:where(:not(iframe, canvas, img, svg, video):not(svg *)) { all: unset; display: revert; }
+*, *::before, *::after { box-sizing: border-box; }
+ol, ul { list-style: none; }
+img { max-width: 100%; }
+table { border-collapse: collapse; }
+textarea { white-space: revert; }
+button {
+  /* https://gist.github.com/MoOx/9137295 */
+  -webkit-appearance: none;
+  display: block;
+  border: none;
+  margin: 0;
+  padding: 0;
+  width: auto;
+  overflow: visible;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  line-height: normal;
+  -webkit-font-smoothing: inherit;
+  -moz-osx-font-smoothing: inherit;
+}
+
+
+/* Generic elements */
+
+details summary::marker { display: none; content: ''; }
+details summary::-webkit-details-marker { display: none; content: ''; }
+
+details > ul {
+  padding-bottom: 1rem;
+  margin-bottom: 0;
+}
+
+
+/* Generic components */
+
+.hamburger-button {
+  cursor: pointer;
+  box-sizing: content-box;
+  display: block;
+  height: 20px;
+  width: 30px;
+}
+.hamburger-button > .icon, .hamburger-button > .icon::before, .hamburger-button > .icon::after {
+  display: block;
+  background-color: #fff;
+  position: absolute;
+  height: 4px;
+  width: 30px;
+  transition: transform 400ms cubic-bezier(0.23, 1, 0.32, 1);
+  border-radius: 2px;
+}
+.hamburger-button > .icon::before { content: ''; margin-top: 8px; }
+.hamburger-button > .icon::after { content: ''; margin-top: 16px; }
+
+
+/* Global setup */
+
+@font-face {
+  font-family: 'Custom Thai';
+  src: local('Thonburi'), local('Ayuthaya');
+  font-weight: 300;
+  unicode-range: U+0E00-0E7F; /* Thai Unicode range */
+}
+@font-face {
+  font-family: 'Custom Sukhumvit Set';
+  src: local('Sukhumvit Set');
+  font-weight: 300;
+  unicode-range: U+0E00-0E7F; /* Thai Unicode range */
+}
+
+/*
+@media not (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #333745;
+    --background-color-lighter: #454B5E;
+    --background-color-darker: #1A1C23;
+    --foreground-color: white;
+  }
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-color: #333745;
+    --background-color-lighter: #454B5E;
+    --background-color-darker: #1A1C23;
+    --foreground-color: white;
+  }
+}
+*/
+:root {
+  /* Note: hardcode dark mode for now, because Anki Desktop does not currently respect light/dark */
+  /*--background-color: #333745;*/
+  /*--background-color-lighter: #454B5E;*/
+  --background-color: #262a35;
+  --background-color-lighter: #434754;
+  --background-color-darker: #1A1C23;
+  --foreground-color: white;
+  --foreground-color-lighter: #adb1bf;
+}
+
+:root, body {
+  /*
+  Note: in Anki Desktop/Mobile <body> has the class `card`. We cannot style this `.card` into a card UI because on
+  iOS the `background` on `<body>` determines the overscroll background, so this messes up the overscroll appearance.
+  */
+  
+  margin: 0;
+  padding: 0;
+  background: var(--background-color-lighter);
+  color: var(--foreground-color);
+  /*font-size: 16px; XXX Just use system default */
+  
+  text-size-adjust: none; /* Prevent text size adjustments on mobile browsers in landscape mode */
+}
+
+/* Anki UI */
+/* Note: this selector does not seem to work on iOS */
+.replay-button {
+  margin: 6px;
+}
+
+
+body.card {
+  /* Use !important to override Anki's "night mode" styling */
+  background: var(--background-color-lighter) !important;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+
+/* Card */
+
+.mcard aside.quick-menu {
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 10px 20px;
+  margin-bottom: -2.6rem;
+  display: flex;
+  flex-direction: row-reverse;
+  align-items: center;
+  background: var(--background-color);
+}
+.mcard aside.quick-menu > *:not(:first-child) {
+  margin-right: 14px;
+}
+.mcard aside.quick-menu > * {
+  cursor: pointer;
+  font-size: 18px;
+}
+.mcard aside.quick-menu > a {
+  color: white;
+  text-decoration: none;
+}
+.mcard aside.quick-menu > button {
+  appearance: none;
+  -webkit-appearance: none;
+  background: none;
+  border: none;
+  box-shadow: none;
+  padding: 0;
+}
+
+.mcard aside.menu > details > summary {
+  box-sizing: content-box;
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 30px;
+  height: 20px;
+  padding: 1rem;
+}
+.mcard aside.menu .links li:not(:first-child) {
+  margin-top: 4px;
+}
+
+/* #qa contains `.mcard` */
+#qa {
+  padding: 1rem;
+  
+  /* Center `.mcard` */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/*
+Note: Anki templates are wrapped in a `.mcard` div. Most styling should target this element as root, otherwise we
+might override styling of Anki UI when viewed in Anki Web for example.
+*/
+:not(.mcard) > .mcard {
+  flex: 1;
+  
+  position: relative;
+  
+  margin: 0; /* Use padding on the container instead, otherwise it gets messed up on small screen sizes */
+  padding: 2.6rem 1rem 3rem 1rem;
+  min-height: 30rem;
+  max-width: 40rem;
+  width: 100%;
+  
+  border-radius: 9px;
+  background: var(--background-color) !important; /* !important required to override Anki's "night mode" */
+  box-shadow: 5px 4px 15px -1px var(--background-color);
+  
+  text-align: center;
+  
+  /*font-size: 16px;*/
+  font-family: Helvetica, sans-serif;
+  /*line-height: 1.4;*/
+  
+  /* Break long lines (e.g. URLs) */
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.mcard a:any-link {
+  cursor: pointer;
+  
+  color: rgb(161, 182, 237);
+  text-decoration: underline;
+  transition: color 300ms;
+}
+.mcard a:any-link:hover {
+  color: rgb(149, 164, 205);
+}
+
+.mcard .hidden:not(:empty) {
+  background: #ccc;
+  color: #ccc;
+  padding-inline: 0.6ch;
+}
+.mcard .hidden:hover {
+  color: black;
+}
+
+/*
+Using:
+  - <b> to mark a Thai phrase
+  - <i> to mark a transcription
+*/
+.mcard .thai-tone-guide:not([data-original]) { visibility: hidden; }
+.mcard i {
+  font-style: normal; /* Reset <i> */
+}
+.mcard b {
+  font-family: 'PSL Ornanong Pro', 'Custom Thai', Helvetica, sans-serif;
+  font-size: 1.4rem;
+  font-weight: 300;
+}
+body.with-alternate-font .mcard b {
+  font-family: 'Custom Sukhumvit Set', 'Sukhimvit Set', sans-serif;
+  line-height: 1.375;
+}
+
+/* Uncomment this to switch the default to Sukhumvit */
+body.with-alternate-font .mcard b { font-family: 'PSL Ornanong Pro', 'Custom Thai', Helvetica, sans-serif !important; }
+body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif !important; line-height: 1.375 !important; }
+
+/* Show <i> elements as hidden by default */
+.mcard .notes i::before {
+  display: inline-block;
+  /*overflow: hidden;*/
+  white-space: nowrap;
+  /*width: 3ch;*/
+  padding: 0 0.5ch;
+  background: #ddd;
+  color: black;
+  vertical-align: bottom;
+}
+.mcard .notes i:not(:hover)::before {
+  content: '\00a0'; /* nonbreaking space to force a blank text element */
+  width: 3ch;
+}
+.with-tone-guides .mcard .notes i:not(:hover)::before {
+  content: attr(data-tones);
+  width: auto;
+  color: #666;
+}
+.mcard .notes i:hover::before {
+  content: attr(data-original);
+}
+
+.mcard h1 {
+  line-height: 1.2;
+  margin-bottom: 6px;
+}
+.mcard.mcard--phrase h1 b {
+  font-size: 2em;
+}
+
+.mcard h1 b {
+  font-family: 'Custom Thai', Helvetica, sans-serif;
+  font-size: 4rem;
+  letter-spacing: 1px;
+}
+.mcard h6 {
+  font-size: 1rem;
+}
+
+.mcard__back {
+  border-top: 2px solid var(--background-color-lighter);
+  margin-top: 1.2rem;
+  padding-top: 1.2rem;
+}
+
+.mcard__back p:not(:last-child) {
+  margin-bottom: 1.2rem;
+}
+
+.mcard__back .answer {
+  display: flex;
+  flex-direction: column;
+  row-gap: 0.4rem;
+}
+.mcard__back .answer p {
+  margin: 0;
+}
+.mcard__back .answer .f-tones {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.3rem;
+  color: var(--foreground-color-lighter);
+  letter-spacing: 2px;
+  font-size:  0.9rem;
+}
+.f-transcription, .mcard__back .answer .f-translation {
+  font-size: 1.2rem;
+}
+.semantics { margin-top: 0.6rem; }
+.semantics .f-classifications {
+  color: var(--foreground-color-lighter);
+  font-size:  0.9rem;
+}
+
+.mcard__back .section-sentence {
+  margin-top: 1.2rem;
+  border-left: 3px solid #1a1c23;
+}
+.mcard__back .notes {
+  margin-top: 0.8rem;
+  padding-top: 0.8rem;
+  border-top: 1px dashed var(--background-color-lighter);
+  
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+.mcard__back .notes img {
+  max-height: 30rem;
+  
+  border-radius: 3px;
+  box-shadow: 5px 4px 15px -1px var(--background-color-darker);
+}
+</style>
+
+
+
+
+
+
+<script>
+window.onerror = (message, source, line, column, error) => {
+  document.body.innerHTML = `Error: ${message} ${source} ${line} ${column} ${error}`;
+  return false;
+};
+</script>
+<script>
+// https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
+function fallbackCopyTextToClipboard(text) {
+  var textArea = document.createElement("textarea");
+  textArea.value = text;
+  
+  // Avoid scrolling to bottom
+  textArea.style.top = "0";
+  textArea.style.left = "0";
+  textArea.style.position = "fixed";
+  
+  document.body.appendChild(textArea);
+  textArea.focus();
+  textArea.select();
+  
+  try {
+    var successful = document.execCommand('copy');
+    var msg = successful ? 'successful' : 'unsuccessful';
+    console.log('Fallback: Copying text command was ' + msg);
+  } catch (err) {
+    console.error('Fallback: Oops, unable to copy', err);
+  }
+  
+  document.body.removeChild(textArea);
+}
+function copyTextToClipboard(text) {
+  if (!navigator.clipboard) {
+    fallbackCopyTextToClipboard(text);
+    return;
+  }
+  navigator.clipboard.writeText(text).then(function() {
+    console.log('Async: Copying to clipboard was successful!');
+  }, function(err) {
+    console.error('Async: Could not copy text: ', err);
+  });
+}
+
+
+(() => {
+  const { parsePhrase, parseToneGuide } = (() => {
+    const parseTone = syllable => {
+      // Take the number at the end of the syllable (if any)
+      return !Number.isNaN(syllable.slice(-1)) ? Number(syllable.slice(-1)) : null;
+    };
+    
+    const diacritics = { 0: '\u0304', 1: '\u0300', 2: '\u0302', 3: '\u0301', 4: '\u030C' };
+    const vowelRegex = /[aiɯueɛoɔɤ]/;
+    const parseSyllable = syllable => {
+      const tone = parseTone(syllable);
+      
+      if (tone === null || !diacritics.hasOwnProperty(tone)) { return syllable; }
+      
+      // Replace the first vowel with that vowel modified by a diacritic, and then slice off the tone number
+      return syllable.replace(vowelRegex, '$&' + diacritics[tone]).slice(0, -1);
+    };
+    
+    const parsePhrase = phrase => {
+      // Note: in the regex, wrap the separator in parens so that the separator is interleaved in the split result:
+      // `'foo-bar baz'.split(/([-\s]+)/)` -> `['foo', '-', 'bar', ' ', 'baz']`
+      // https://stackoverflow.com/questions/4514144/js-string-split-without-removing-the-delimiters
+      const syllablesWithSeparators = phrase.split(/([-,;/\s]+)/);
+      
+      return syllablesWithSeparators.reduce(
+        (acc, item, index) => {
+          if (index % 2 === 1) {
+            const separator = item.replace('-', '‑');
+            return `${acc}${separator}`;
+          } else {
+            const syllable = item;
+            return `${acc}${parseSyllable(syllable)}`;
+          }
+        },
+        '',
+      );
+    };
+    
+    // const toneSymbols = { 0: '꜔', 1: '꜖', 2: '꜓꜖', 3: '꜒', 4: '꜕꜒' }; // w/Tone_letter
+    // const toneSymbols = { 0: '–', 1: '_', 2: '⋀', 3: '⎺', 4: '⋁' };
+    const toneSymbols = { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4' };
+    const parseToneGuide = phrase => {
+      const syllablesWithSeparators = phrase.replace(',,', '').trim().split(/([-,;/\s]+)/);
+      
+      return syllablesWithSeparators.reduce(
+        (acc, item, index) => {
+          if (index % 2 === 1) {
+            const separator = item.replace('-', '–');
+            return `${acc}${separator}`;
+          } else {
+            const syllable = item;
+            const tone = parseTone(syllable);
+            // Note: cannot use `??` here (Anki browser engine is too old)
+            const toneSymbol = typeof toneSymbols[tone] === 'string' ? toneSymbols[tone] : '?';
+            return `${acc}${toneSymbol}`;
+          }
+        },
+        '',
+      );
+    };
+    
+    return { parsePhrase, parseToneGuide };
+  })();
+  
+  // http://stackoverflow.com/questions/37684/how-to-replace-plain-urls-with-links
+  const replaceUrlsWithHtmlLinks = (text) => {
+    // Note: modified the regex with a negative lookahead `(?![^<]*<\/a>)` to prevent replacing existing `<a/>` tags
+    // Also added `()` to the allowed characters list to allow Wikipedia URL paths like `wiki/foo_(bar)`
+    const regex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()\u0E00-\u0E7F]*[-A-Z0-9+&@#\/%=~_|\u0E00-\u0E7F])(?![^<]*<\/a>)/ig;
+    
+    // Note: cannot use `target="_blank"` here, breaks links on Anki Desktop
+    return text.replace(regex, `<a href="$1" class="generated-link">$1</a>`);
+  };
+  
+  const formatThai = (text) => {
+    // Wrap Thai text with `<b>...</b>`, if not already wrapped
+    // Note: use `\u0E00-\u0E3E\u0E40-\u0E7F` for Thai characters (this excludes \u0E3F which is ฿)
+    // https://en.wikipedia.org/wiki/Thai_(Unicode_block)
+    let textFormatted = text.replace(/(^|[^\u0E00-\u0E3E\u0E40-\u0E7F]{1,3})([\u0E00-\u0E3E\u0E40-\u0E7F]+?)(?=[^\u0E00-\u0E3E\u0E40-\u0E7F]|$)/g, (phraseComplete, delim, phraseThai, index) => { return delim === '<b>' ? `${delim}${phraseThai}` : `${delim}<b>${phraseThai}</b>`; });
+    // Hack fix for overzealous `<b>` wrapping
+    textFormatted = textFormatted.replace(/<a(.+?)>(.+?)<\/a>/g, (match) => { return match.replace(/<[/]?b>/g, ''); });
+    return textFormatted;
+  };
+  const formatTranscriptions = (text) => {
+    // Wrap transcriptions (/foo/) with `<i>...</i>`, if not already wrapped
+    const textFormatted = text.replace(/<[/]b>\s[/]([-a-zA-Zɔɯɤɛ0-9,;/\s]*?)[/]/g, (_, transcription) => {
+      return `
+        </b>
+        <i class="parsed" data-original="${transcription}" data-tones="${parseToneGuide(transcription)}"></i>
+      `;
+    });
+    return textFormatted;
+  };
+  
+  
+  
+  // Expose `window`, so that it can be called from the individual front/back card templates
+  window.updateCard = () => {
+    const cardEl = document.querySelectorAll(':not(.mcard) > .mcard')[0];
+    const notesEl = document.querySelector('.notes');
+    if (notesEl) {
+      notesEl.innerHTML = replaceUrlsWithHtmlLinks(notesEl.innerHTML);
+      notesEl.innerHTML = formatThai(notesEl.innerHTML);
+      notesEl.innerHTML = formatTranscriptions(notesEl.innerHTML);
+    }
+    const sourceEl = document.querySelector('.source');
+    if (sourceEl) {
+      sourceEl.innerHTML = replaceUrlsWithHtmlLinks(sourceEl.innerHTML);
+    }
+    
+    document.querySelectorAll('.thai-romanization').forEach(el => {
+      if (!el.classList.contains('parsed')) {
+        el.dataset.original = el.innerText;
+        const parsed = el.innerText.trim()
+          .replace(/(?=^[/])?(.+?)(?=[/]?$)/, (match, phrase) => parsePhrase(phrase));
+        el.innerText = parsed;
+        el.classList.add('parsed');
+      }
+    });
+    
+    document.querySelectorAll('.thai-tone-guide').forEach(el => {
+      if (!el.classList.contains('parsed')) {
+        //if (/^[\d\s-]+$/.test(el.innerText) { return; }
+        el.dataset.original = el.innerText;
+        el.innerText = parseToneGuide(el.innerText.trim());
+        el.classList.add('parsed');
+      }
+    });
+  };
+})();
+</script>
+<style>
+
+      </style>
+      
+      <div id="qa">
+        <!--
+- <b> is used for Thai words/phrases
+- <i> is used for romanization
+-->
+<article class="mcard">
+  <!-- FrontSide will also contain an `mcard` element, need to solve this in CSS -->
+  <!-- Last updated 2022-04-10 -->
+
+<!--
+- <b> is used for Thai words/phrases
+- <i> is used for romanization
+-->
+<article class="mcard ">
+  <aside class="menu">
+    <details>
+      <summary><span class="hamburger-button"><span class="icon"></span></span></summary>
+      
+      <div class="source">
+        {{sort}}<br/>
+        {{source}}<br/>
+        {{source_section}}<br/>
+      </div>
+      
+      <ul class="links">
+        <li>
+          <a href="https://www.wiktionary.org/wiki/{{text:vocab}}">wiktionary</a>
+        </li>
+        <li>
+          <a href="https://www.thai2english.com/search?q={{text:vocab}}">thai2english – word</a>
+        </li>
+        <li>
+          <a href="thai-language://search/{{text:vocab}}">
+            thai-language – word
+          </a>
+        </li>
+        <li>
+          <a href="thai-language://search/{{text:sentence}}">
+            thai-language – sentence
+          </a>
+        </li>
+        <!--
+        <li>
+          <a href="thai-language://search/{{text:vocab}}"
+            onclick="window.copyTextToClipboard(`{{text:vocab}}`)"
+          >
+            dict (thai-english) [with copy]
+          </a>
+        </li>
+        -->
+      </ul>
+    </details>
+  </aside>
+  
+  <section class="mcard__front">
+    <h1><b>อักษรไทย</b></h1>
+    
+    <span class="hidden">[x]</span>
+  </section>
+</article>
+
+<script>
+  //<span id="update-count">0</span>
+  //document.getElementById('update-count').innerText = Number(document.getElementById('update-count').innerText) + 1;
+  
+  // Rerun the JS upon rendering this template
+  window.updateCard();
+</script>
+
+  
+  <!-- See: https://docs.ankiweb.net/templates/fields.html#text-to-speech -->
+  {{tts th_TH speed=1.0:vocab}}
+  
+  <section class="mcard__back">
+    <header class="answer">
+      <div class="phonetics">
+        <p class="f-tones">
+          <span class="thai-tone-guide">ak1-sɔɔn4 thai0</span>
+        </p>
+        <p class="f-transcription">
+          
+          <i class="thai-romanization hidden">ak1-sɔɔn4 thai0</i>
+        </p>
+      </div>
+      
+      <div class="semantics">
+        
+        
+        <p class="f-translation">
+          <span class="xhidden">Thai script</span>
+        </p>
+        
+        
+      </div>
+    </header>
+    
+    
+    
+    
+    <div class="notes">
+      
+    <p>
+      A very long link: <a href="https://en.wikipedia.org/wiki/Thai_Kedmanee_keyboard_layout">https://en.wikipedia.org/wiki/Thai_Kedmanee_keyboard_layout</a>
+    </p>
+    <p>
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed commodo dolor libero, nec aliquam urna malesuada interdum. Morbi in metus vel ex tempor malesuada. Etiam tincidunt imperdiet nibh, id tempor tortor dictum varius. Aenean mollis tempus mauris et consectetur. Praesent ac felis sit amet odio consequat tincidunt at ac velit. Curabitur metus lectus, molestie accumsan mauris vel, tincidunt vestibulum magna.
+    </p>
+    <p>Some Thai: อักษรไทย /ak1-sɔɔn4 thai0/</p>
+    <p><img src="./media/buddha.jpg"></p>
+    <p>
+      Integer interdum, nisl rutrum dignissim vehicula, mauris diam cursus felis, in interdum elit sapien eu enim. Nullam ac ultricies leo, ac convallis massa. Aenean id dapibus dolor, et ultrices justo. Sed id ligula quis libero congue maximus sit amet sollicitudin velit. Etiam eleifend felis ut rutrum congue.
+    </p>
+  
+    </div>
+    
+  </section>
+  
+  <aside class="quick-menu">
+    <button onclick="document.body.classList.toggle('with-alternate-font')">
+      <span style="font-family: 'Custom Thai'">ด</span>
+      ⇄&#xFE0E;
+      <span style="font-family: 'Custom Sukhumvit Set'">ด</span>
+    </button>
+    <button onclick="document.body.classList.toggle('with-tone-guides')">
+      1–4
+    </button>
+    <a href="thai-language://search/{{text:vocab}}">📘</a>
+  </aside>
+</article>
+
+<script>
+  //<span id="update-count">0</span>
+  //document.getElementById('update-count').innerText = Number(document.getElementById('update-count').innerText) + 1;
+  
+  // Rerun the JS upon rendering this template
+  window.updateCard();
+</script>
+
+      </div>
+    </body>
+  
+    </html>
+  

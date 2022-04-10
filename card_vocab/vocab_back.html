@@ -1,0 +1,78 @@
+<!--
+- <b> is used for Thai words/phrases
+- <i> is used for romanization
+-->
+<article class="mcard">
+  <!-- FrontSide will also contain an `mcard` element, need to solve this in CSS -->
+  {{FrontSide}}
+  
+  <!-- See: https://docs.ankiweb.net/templates/fields.html#text-to-speech -->
+  {{tts th_TH speed=1.0:vocab}}
+  
+  <section class="mcard__back">
+    <header class="answer">
+      <div class="phonetics">
+        <p class="f-tones">
+          <span class="thai-tone-guide">{{vocab_transcription}}</span>
+        </p>
+        <p class="f-transcription">
+          {{#vocab_phonetic}}/{{vocab_phonetic}}/{{/vocab_phonetic}}
+          <i class="thai-romanization hidden">{{vocab_transcription}}</i>
+        </p>
+      </div>
+      
+      <div class="semantics">
+        {{#classifications}}
+        <p class="f-classifications">
+          {{classifications}}
+        </p>
+        {{/classifications}}
+        
+        <p class="f-translation">
+          <span class="xhidden">{{vocab_translation}}</span>
+        </p>
+        
+        {{#classifier}}
+        <p class="f-classifier">
+          Classifier: {{classifier}}
+        </p>
+        {{/classifier}}
+      </div>
+    </header>
+    
+    {{#sentence}}
+    <div class="section-sentence">
+      <b class="f-sentence">{{sentence}}</b><br>
+      {{#sentence_translation}}
+        <span class="f-sentence-translation hidden">{{sentence_translation}}</span>
+      {{/sentence_translation}}
+    </div>
+    {{/sentence}}
+    
+    {{#notes}}
+    <div class="notes">
+      {{notes}}
+    </div>
+    {{/notes}}
+  </section>
+  
+  <aside class="quick-menu">
+    <button onclick="document.body.classList.toggle('with-alternate-font')">
+      <span style="font-family: 'Custom Thai'">ด</span>
+      ⇄&#xFE0E;
+      <span style="font-family: 'Custom Sukhumvit Set'">ด</span>
+    </button>
+    <button onclick="document.body.classList.toggle('with-tone-guides')">
+      1–4
+    </button>
+    <a href="thai-language://search/{{text:vocab}}">📘</a>
+  </aside>
+</article>
+
+<script>
+  //<span id="update-count">0</span>
+  //document.getElementById('update-count').innerText = Number(document.getElementById('update-count').innerText) + 1;
+  
+  // Rerun the JS upon rendering this template
+  window.updateCard();
+</script>

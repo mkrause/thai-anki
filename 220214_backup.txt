@@ -1,0 +1,222 @@
+
+-- Front --
+
+<span class="f-word">{{vocab}}</span>
+
+
+-- Back --
+
+{{FrontSide}}
+
+<hr id=answer>
+
+<p class="f-phonetic">
+  <span class="thai">{{vocab_phonetic}}</span>
+  <a href="" onclick="return false" class="f-transliteration hiddenx action-play">{{vocab_transcription}}</a>
+</p>
+<p class="f-translation">{{vocab_translation}}</p>
+{{#classifications}}
+<p class="f-classifications">
+  {{classifications}}
+</p>
+{{/classifications}}
+
+{{#sentence}}
+<p class="section-sentence">
+  <span class="f-sentence">{{sentence}}</span><br>
+  <span class="f-sentence-translation hidden">{{sentence_translation}}</span>
+</p>
+{{/sentence}}
+
+<div class="f-notes">
+  {{notes}}
+</div>
+
+<p><a href="https://www.thai2english.com/search?q={{vocab}}">dict (thai2english)</a></p>
+
+
+<script>
+const diacritics = { 0: '', 1: '\u0300', 2: '\u0302', 3: '\u0301', 4: '\u030C' };
+
+const parseSyllable = syllable => {
+  const tone = syllable.slice(-1);
+  if (!diacritics.hasOwnProperty(tone)) { return syllable; }
+  return syllable.replace(/[aiɯueɛoɔɤ]/, '$&' + diacritics[tone]).slice(0, -1);
+};
+
+const parseWord = word => {
+  const syllables = word.split(/[ -]/);
+  return syllables.map(parseSyllable).join('-');
+};
+
+setTimeout(() => {
+  // TODO: fix timeout
+  //document.querySelector('.f-transliteration').innerText = parseWord(document.querySelector('.f-transliteration').innerText.trim());
+}, 0);
+
+
+
+
+
+
+
+let _speechSynth;
+let _voices;
+const _cache = {};
+
+/**
+ * retries until there have been voices loaded. No stopper flag included in this example. 
+ * Note that this function assumes, that there are voices installed on the host system.
+ */
+
+function loadVoicesWhenAvailable (onComplete = () => {}) {
+  _speechSynth = window.speechSynthesis
+  const voices = _speechSynth.getVoices()
+
+  if (voices.length !== 0) {
+    _voices = voices
+    onComplete()
+  } else {
+    return setTimeout(function () { loadVoicesWhenAvailable(onComplete) }, 100)
+  }
+}
+
+/**
+ * Returns the first found voice for a given language code.
+ */
+
+function getVoices (locale) {
+  if (!_speechSynth) {
+    throw new Error('Browser does not support speech synthesis')
+  }
+  if (_cache[locale]) return _cache[locale]
+
+  _cache[locale] = _voices.filter(voice => voice.lang === locale)
+  return _cache[locale]
+}
+
+/**
+ * Speak a certain text 
+ * @param locale the locale this voice requires
+ * @param text the text to speak
+ * @param onEnd callback if tts is finished
+ */
+
+function playByText (locale, text, onEnd) {
+  const voices = getVoices(locale)
+
+  // TODO load preference here, e.g. male / female etc.
+  // TODO but for now we just use the first occurrence
+  const utterance = new window.SpeechSynthesisUtterance()
+  utterance.voice = voices[0]
+  utterance.pitch = 1
+  utterance.rate = 1
+  utterance.voiceURI = 'native'
+  utterance.volume = 1
+  utterance.rate = 1
+  utterance.pitch = 0.8
+  utterance.text = text
+  utterance.lang = locale
+
+  if (onEnd) {
+    utterance.onend = onEnd
+  }
+
+  _speechSynth.cancel() // cancel current speak, if any is running
+  _speechSynth.speak(utterance)
+}
+
+// on document ready
+loadVoicesWhenAvailable(function () {
+ console.log("loaded") 
+})
+
+
+setTimeout(() => {
+[...document.querySelectorAll('.action-play')].forEach(el => {
+  const handleClick = () => {
+    /*
+    alert(window.speechSynthesis.getVoices().length);
+    const text = `{{vocab}}`;
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = 'th-TH';
+    utterance.voice = { name: "Kanya", voiceURI: "com.apple.ttsbundle.Kanya-compact", lang: "th-TH", localService: true, "default": true };
+    window.speechSynthesis.speak(utterance);
+    */
+    
+    setTimeout(() => playByText('th-TH', `{{vocab}}`), 300);
+  };
+  el.addEventListener('click', handleClick, false);
+});
+}, 0);
+</script>
+
+
+
+
+-- Styling --
+
+/* Test * /
+@media (prefers-color-scheme: dark) {
+  :root, body { background: lightblue; color: black; }
+  .card { background: lightblue !important; color: black !important; }
+}
+*/
+
+
+
+:root {
+  font-size: 14px;
+}
+
+@font-face {
+  font-family: CustomFont;
+  font-weight: lighter;
+  unicode-range: U+0E00-0E7F;
+}
+
+.thai {
+  font-size: 1.5rem;
+  font-weight: lighter;
+}
+
+.card {
+  font-size: 1rem;
+  font-family: Arial;
+  text-align: center;
+  color: black;
+  background-color: white;
+}
+
+.hidden {
+  background: #eee;
+  color: #eee;
+}
+.hidden:hover {
+  color: black;
+}
+.action-play {
+  color: unset !important;
+  text-decoration: unset;
+}
+
+.f-word {
+  font-size: 3rem;
+}
+
+.f-transliteration { font-size: 1.2rem; }
+.f-translation { font-size: 1.2rem; }
+
+.f-classifications {
+  font-size: 1rem;
+}
+.f-notes {
+  font-size: 1.2rem;
+}
+
+.section-sentence {
+  margin-top: 1rem;
+}
+.f-sentence {
+  font-size: 1.5rem;
+}

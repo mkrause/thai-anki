@@ -1,0 +1,61 @@
+<!-- Last updated 2022-04-10 -->
+
+<!--
+- <b> is used for Thai words/phrases
+- <i> is used for romanization
+-->
+<article class="mcard {{#is_phrase}}mcard--phrase{{/is_phrase}}">
+  <aside class="menu">
+    <details>
+      <summary><span class="hamburger-button"><span class="icon"></span></span></summary>
+      
+      <div class="source">
+        {{sort}}<br/>
+        {{source}}<br/>
+        {{source_section}}<br/>
+      </div>
+      
+      <ul class="links">
+        <li>
+          <a href="https://www.wiktionary.org/wiki/{{text:vocab}}">wiktionary</a>
+        </li>
+        <li>
+          <a href="https://www.thai2english.com/search?q={{text:vocab}}">thai2english – word</a>
+        </li>
+        <li>
+          <a href="thai-language://search/{{text:vocab}}">
+            thai-language – word
+          </a>
+        </li>
+        <li>
+          <a href="thai-language://search/{{text:sentence}}">
+            thai-language – sentence
+          </a>
+        </li>
+        <!--
+        <li>
+          <a href="thai-language://search/{{text:vocab}}"
+            onclick="window.copyTextToClipboard(`{{text:vocab}}`)"
+          >
+            dict (thai-english) [with copy]
+          </a>
+        </li>
+        -->
+      </ul>
+    </details>
+  </aside>
+  
+  <section class="mcard__front">
+    <h1><b>{{vocab}}</b></h1>
+    
+    {{#hint}}<span class="hidden">{{hint}}</span>{{/hint}}
+  </section>
+</article>
+
+<script>
+  //<span id="update-count">0</span>
+  //document.getElementById('update-count').innerText = Number(document.getElementById('update-count').innerText) + 1;
+  
+  // Rerun the JS upon rendering this template
+  window.updateCard();
+</script>

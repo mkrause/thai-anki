@@ -1,0 +1,95 @@
+
+# Anki template guide
+
+## Browser engine
+
+To check the engine:
+
+```
+</style>
+<script>
+document.body.innerHTML = navigator.userAgent;
+</script>
+<style>
+```
+
+observed result: (as of 2022-02-14)
+  > in Anki Desktop (for Mac) (v2.1.49), this gives:
+    `Mozilla/5.0 (Macintosh; Intel Mac OS X 10_16_0) AppleWebKit/537.36 (KHTML, like Gecko) QtWebEngine/5.14.2 Chrome/77.0.3865.129 Safari/537.36`
+  > i.e. it uses the `QtWebEngine` engine
+    > https://doc.qt.io/archives/qt-5.14/qtwebengine-index.html
+    > QtWebEngine is based on Chromium, for a mapping of versions see:
+      https://wiki.qt.io/QtWebEngine/ChromiumVersions
+    > QtWebEngine v5.14.2 corresponds to Chromium 77
+    > this will limit the features that we can use on Anki Desktop, in particular:
+      - no nullish coalescing or `??`
+      - no `Object.hasOwn`
+      - no CSS `:is()`
+      - no CSS `@layer`
+      - etc.
+  > history:
+    > apparently Anki 2.1 started using QtWebEngine rather than QtWebKit (i.e. switched from WebKit to Chromium):
+      https://old.reddit.com/r/Anki/comments/cksr3e/why_reviewing_cards_on_20_is_faster_than_21
+
+
+## Debugging
+
+debugging:
+  > Anki does not provide any debuggign tools out of the box
+  > however, there is an extension to enable Chromium DevTools(!) in Anki 2.1+:
+    https://ankiweb.net/shared/info/31746032
+
+> to get all uncaught errors to be displayed, we could do the following:
+
+```
+<script>
+window.onerror = (message, source, line, column, error) => {
+  document.body.innerHTML = `Error: ${message} ${source} ${line} ${column} ${error}`;
+  return false;
+};
+</script>
+```
+
+
+## Template
+
+https://docs.ankiweb.net/templates/styling.html
+
+
+Anki document structure:
+  > can view in the browser using Anki Web
+
+
+Anki Web:
+
+<body>
+  <main class="container">
+    <div id="quiz">
+      <div id="qa_box" class="card card1">
+        <div id="activity" class="invisible"><img src="/static/activity.gif"></div>
+        <div id="qa" style="zoom: 1;">
+          [card]
+        </div>
+      </div>
+    </div>
+  </main>
+</body>
+
+
+
+
+in Anki itself:
+
+> tip:
+<script>
+document.body.innerText = document.body.innerHTML;
+</script>
+
+<body class="card card1 isMac">
+  <div id="_mark" hidden="">★</div>
+  <div id="_flag" hidden="">⚑</div>
+
+  <div id="qa" style="opacity: 0;">
+    [card]
+  </div>
+</body>
