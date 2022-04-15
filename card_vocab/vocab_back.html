@@ -42,10 +42,11 @@
     
     {{#sentence}}
     <div class="section-sentence">
-      <b class="f-sentence">{{sentence}}</b><br>
+      <b class="f-sentence">{{sentence}}</b><br/>
       {{#sentence_translation}}
-        <span class="f-sentence-translation hidden">{{sentence_translation}}</span>
+        <span class="f-sentence-translation hidden">{{sentence_translation}}</span><br/>
       {{/sentence_translation}}
+      <br/><div class="f-sentence-notes notes">{{sentence_notes}}</div>
     </div>
     {{/sentence}}
     
@@ -66,6 +67,8 @@
       1–4
     </button>
     <a href="thai-language://search/{{text:vocab}}">📘</a>
+    <a href="thai-language://search/{{text:sentence}}">📗</a>
+    <a href="https://www.wiktionary.org/wiki/{{text:vocab}}" style="font-family: serif; color: #eee">W</a>
   </aside>
 </article>
 

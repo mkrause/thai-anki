@@ -273,7 +273,7 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
   padding: 0 0.5ch;
   background: #ddd;
   color: black;
-  vertical-align: bottom;
+  vertical-align: middle;
 }
 .mcard .notes i:not(:hover)::before {
   content: '\00a0'; /* nonbreaking space to force a blank text element */
@@ -285,7 +285,7 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
   color: #666;
 }
 .mcard .notes i:hover::before {
-  content: attr(data-original);
+  content: attr(data-transcription);
 }
 
 .mcard h1 {
@@ -330,7 +330,7 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
   padding: 0.3rem;
   color: var(--foreground-color-lighter);
   letter-spacing: 2px;
-  font-size:  0.9rem;
+  font-size: 0.9rem;
 }
 .f-transcription, .mcard__back .answer .f-translation {
   font-size: 1.2rem;
@@ -338,14 +338,15 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
 .semantics { margin-top: 0.6rem; }
 .semantics .f-classifications {
   color: var(--foreground-color-lighter);
-  font-size:  0.9rem;
+  font-size: 0.9rem;
 }
 
 .mcard__back .section-sentence {
   margin-top: 1.2rem;
+  padding: 0 1rem;
   border-left: 3px solid #1a1c23;
 }
-.mcard__back .notes {
+.mcard__back > .notes {
   margin-top: 0.8rem;
   padding-top: 0.8rem;
   border-top: 1px dashed var(--background-color-lighter);
@@ -478,7 +479,7 @@ function copyTextToClipboard(text) {
   const replaceUrlsWithHtmlLinks = (text) => {
     // Note: modified the regex with a negative lookahead `(?![^<]*<\/a>)` to prevent replacing existing `<a/>` tags
     // Also added `()` to the allowed characters list to allow Wikipedia URL paths like `wiki/foo_(bar)`
-    const regex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()\u0E00-\u0E7F]*[-A-Z0-9+&@#\/%=~_|\u0E00-\u0E7F])(?![^<]*<\/a>)/ig;
+    const regex = /(\b(https?|ftp|file):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;()\u0E00-\u0E7F]*[-A-Z0-9+&@#\/%=~_|()\u0E00-\u0E7F])(?![^<]*<\/a>)/ig;
     
     // Note: cannot use `target="_blank"` here, breaks links on Anki Desktop
     return text.replace(regex, `<a href="$1" class="generated-link">$1</a>`);
@@ -498,7 +499,7 @@ function copyTextToClipboard(text) {
     const textFormatted = text.replace(/<[/]b>\s[/]([-a-zA-Zɔɯɤɛ0-9,;/\s]*?)[/]/g, (_, transcription) => {
       return `
         </b>
-        <i class="parsed" data-original="${transcription}" data-tones="${parseToneGuide(transcription)}"></i>
+        <i class="parsed" data-original="${transcription}" data-transcription="${parsePhrase(transcription)}" data-tones="${parseToneGuide(transcription)}"></i>
       `;
     });
     return textFormatted;
@@ -509,12 +510,12 @@ function copyTextToClipboard(text) {
   // Expose `window`, so that it can be called from the individual front/back card templates
   window.updateCard = () => {
     const cardEl = document.querySelectorAll(':not(.mcard) > .mcard')[0];
-    const notesEl = document.querySelector('.notes');
-    if (notesEl) {
+    document.querySelectorAll('.notes').forEach(notesEl => {
       notesEl.innerHTML = replaceUrlsWithHtmlLinks(notesEl.innerHTML);
       notesEl.innerHTML = formatThai(notesEl.innerHTML);
       notesEl.innerHTML = formatTranscriptions(notesEl.innerHTML);
-    }
+    });
+      
     const sourceEl = document.querySelector('.source');
     if (sourceEl) {
       sourceEl.innerHTML = replaceUrlsWithHtmlLinks(sourceEl.innerHTML);
