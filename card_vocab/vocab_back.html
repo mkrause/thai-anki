@@ -7,7 +7,8 @@
   {{FrontSide}}
   
   <!-- See: https://docs.ankiweb.net/templates/fields.html#text-to-speech -->
-  {{tts th_TH speed=1.0:vocab}}
+  {{tts th_TH voices=Apple_Narisa_(Enhanced),speed=1.0:vocab}}
+  <!-- For voice list: {tts-voices:} (in double braces) -->
   
   <section class="mcard__back">
     <header class="answer">
@@ -64,11 +65,13 @@
       <span style="font-family: 'Custom Sukhumvit Set'">ด</span>
     </button>
     <button onclick="document.body.classList.toggle('with-tone-guides')">
-      1–4
+      0–4
     </button>
     <a href="thai-language://search/{{text:vocab}}">📘</a>
-    <a href="thai-language://search/{{text:sentence}}">📗</a>
+    <!-- Sentence may contain double quotes so use single quotes in `href` attribute -->
+    <a href='thai-language://search/{{text:sentence}}'>📗</a>
     <a href="https://www.wiktionary.org/wiki/{{text:vocab}}" style="font-family: serif; color: #eee">W</a>
+    <a href="https://www.google.com/search?tbm=isch&q={{text:vocab}}" style="font-family: serif; color: #eee">G</a>
   </aside>
 </article>
 
