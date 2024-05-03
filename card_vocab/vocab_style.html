@@ -235,7 +235,7 @@ might override styling of Anki UI when viewed in Anki Web for example.
 .mcard .hidden:not(:empty) {
   background: #ccc;
   color: #ccc;
-  padding-inline: 0.6ch;
+  padding: 0 0.6ch;
 }
 .mcard .hidden:hover {
   color: black;
@@ -260,9 +260,9 @@ body.with-alternate-font .mcard b {
   line-height: 1.375;
 }
 
-/* Uncomment this to switch the default to Sukhumvit */
-body.with-alternate-font .mcard b { font-family: 'PSL Ornanong Pro', 'Custom Thai', Helvetica, sans-serif !important; }
-body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif !important; line-height: 1.375 !important; }
+/* Swap these selectors to switch the default font */
+body .mcard b { font-family: 'PSL Ornanong Pro', 'Custom Thai', Helvetica, sans-serif !important; }
+body.with-alternate-font .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif !important; line-height: 1.375 !important; }
 
 /* Show <i> elements as hidden by default */
 .mcard .notes i::before {
@@ -292,15 +292,16 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
   line-height: 1.2;
   margin-bottom: 6px;
 }
-.mcard h1 b {
-  font-size: 2em;
-}
 
 .mcard h1 b {
   font-family: 'Custom Thai', Helvetica, sans-serif;
   font-size: 4rem;
   /*letter-spacing: 1px; // Letter spacing seems to mess with diacritics in Sukhumvit font*/
 }
+.mcard--phrase h1 b {
+  font-size: 2em;
+}
+
 .mcard h6 {
   font-size: 1rem;
 }
@@ -346,6 +347,11 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
   padding: 0 1rem;
   border-left: 3px solid #1a1c23;
 }
+.mcard__back .section-sentence div {
+  /* Anki inserts <div>s as line breaks */
+  margin: 0;
+  padding: 0;
+}
 .mcard__back > .notes {
   margin-top: 0.8rem;
   padding-top: 0.8rem;
@@ -368,10 +374,12 @@ body .mcard b { font-family: 'Custom Sukhumvit Set', 'Sukhumvit Set', sans-serif
 
 
 <script>
+/*
 window.onerror = (message, source, line, column, error) => {
   document.body.innerHTML = `Error: ${message} ${source} ${line} ${column} ${error}`;
   return false;
 };
+*/
 </script>
 <script>
 // https://stackoverflow.com/questions/400212/how-do-i-copy-to-the-clipboard-in-javascript
@@ -414,6 +422,8 @@ function copyTextToClipboard(text) {
 (() => {
   const { parsePhrase, parseToneGuide } = (() => {
     const parseTone = syllable => {
+      if (syllable.trim() === '') { return ''; }
+      if (syllable.trim() === ',,') { return ',,'; }
       // Take the number at the end of the syllable (if any)
       return !Number.isNaN(syllable.slice(-1)) ? Number(syllable.slice(-1)) : null;
     };
@@ -453,7 +463,7 @@ function copyTextToClipboard(text) {
     // const toneSymbols = { 0: '–', 1: '_', 2: '⋀', 3: '⎺', 4: '⋁' };
     const toneSymbols = { 0: '0', 1: '1', 2: '2', 3: '3', 4: '4' };
     const parseToneGuide = phrase => {
-      const syllablesWithSeparators = phrase.replace(',,', '').trim().split(/([-,;/\s]+)/);
+      const syllablesWithSeparators = phrase.trim().split(/([-;/\s]+)/);
       
       return syllablesWithSeparators.reduce(
         (acc, item, index) => {
@@ -463,8 +473,13 @@ function copyTextToClipboard(text) {
           } else {
             const syllable = item;
             const tone = parseTone(syllable);
+            
+            if (tone === ',,') { return `${acc} ,,`; }
+            
             // Note: cannot use `??` here (Anki browser engine is too old)
-            const toneSymbol = typeof toneSymbols[tone] === 'string' ? toneSymbols[tone] : '?';
+            const toneSymbol = typeof tone === 'string' ? tone
+              : typeof toneSymbols[tone] === 'string' ? toneSymbols[tone]
+              : '?';
             return `${acc}${toneSymbol}`;
           }
         },
@@ -504,6 +519,17 @@ function copyTextToClipboard(text) {
     });
     return textFormatted;
   };
+  const formatDeviantTranscriptions = (text) => {
+    // Similar to /x/ transcriptions, but in this case we do not want to hide it, just show it
+    // Useful for example when the transcription is not what you would expect from the original Thai
+    const textFormatted = text.replace(/<[/]b>\s[/][/]([-a-zA-Zɔɯɤɛ0-9,;/\s]*?)[/][/]/g, (_, transcription) => {
+      return `
+        </b>
+        <span>/${parsePhrase(transcription)}/</span>
+      `;
+    });
+    return textFormatted;
+  };
   
   
   
@@ -513,6 +539,7 @@ function copyTextToClipboard(text) {
     document.querySelectorAll('.notes').forEach(notesEl => {
       notesEl.innerHTML = replaceUrlsWithHtmlLinks(notesEl.innerHTML);
       notesEl.innerHTML = formatThai(notesEl.innerHTML);
+      notesEl.innerHTML = formatDeviantTranscriptions(notesEl.innerHTML);
       notesEl.innerHTML = formatTranscriptions(notesEl.innerHTML);
     });
       
